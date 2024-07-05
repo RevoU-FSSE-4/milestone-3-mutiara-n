@@ -11,10 +11,10 @@ user_routes = Blueprint("user_routes", __name__)
 
 @user_routes.route('/users', methods=['POST'])
 def register_user():
-    Session = sessionmaker(bind=connection)
+    Session = sessionmaker(connection)
     s = Session()
-
     s.begin()
+
     try:
         NewUser = Users(
             username=request.form['username'],
@@ -35,10 +35,10 @@ def register_user():
 
 @user_routes.route('/users/login', methods=['POST'])
 def check_login():
-    Session = sessionmaker(bind=connection)
+    Session = sessionmaker(connection)
     s = Session()
-
     s.begin()
+
     try:
         email = request.form['email']
         user = s.query(Users).filter(Users.email == email).first()
@@ -61,10 +61,7 @@ def check_login():
     except Exception as e:
         s.rollback()
         print(e)
-        return { "message": "Login Failed" }, 500
-    
-    finally:
-        s.close()      
+        return { "message": "Login Failed" }, 500    
     
 @user_routes.route('/users/me', methods=['GET'])
 @login_required
@@ -98,6 +95,9 @@ def update_user():
     try:
         user = s.query(Users).filter(Users.id == current_user.id).first()
 
+        if not user:
+            return {"message": "User not found"}, 404
+
         user.username = request.form['username']
         user.email = request.form['email']
         
@@ -105,9 +105,9 @@ def update_user():
         return {"message": "Update user data success"}, 200
 
     except Exception as e:
-        print(e)
+        print(str(e))
         s.rollback()
-        return { "message": "Update Failed" }, 500
+        return { "message": "Update Failed", 'error': str(e)}, 500
 
 @user_routes.route('/users/logout', methods=['GET'])
 @login_required
