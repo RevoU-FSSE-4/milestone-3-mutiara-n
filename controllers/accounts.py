@@ -9,8 +9,6 @@ from models.users import Users
 
 from flask_login import login_required, current_user
 
-from decorators.role_checker import id_required
-
 account_routes = Blueprint("account_routes", __name__)
 
 @account_routes.route('/accounts', methods=['GET'])
@@ -18,9 +16,10 @@ account_routes = Blueprint("account_routes", __name__)
 def show_users():
     Session = sessionmaker(connection)
     s = Session()
+    s.begin()
 
     try:
-        account_query = select(Accounts)
+        account_query = select(Accounts).filter(Accounts.user_id == current_user.id)
         result = s.execute(account_query)
         accounts = []
 
@@ -40,14 +39,19 @@ def show_users():
         return { 'message': 'Unexpected Error' }, 500    
     
 @account_routes.route('/accounts/<id>', methods=['GET'])
+@login_required
 def get_account(id):
     Session = sessionmaker(connection)
     s = Session()
     s.begin()
-    try:
-        account = s.query(Accounts).filter(Accounts.id == id).first()
 
-        if account:
+    try:
+        account = s.query(Accounts).filter(Accounts.id == id, current_user.id == Accounts.user_id).first()
+
+        if account == None:
+            return { "message": "Account not found" }, 403        
+        
+        elif account:
             account_data = {
                 'user_id': account.user_id,
                 'account_type': account.account_type,
@@ -64,11 +68,12 @@ def get_account(id):
         return { 'message': 'Unexpected Error' }, 500    
 
 @account_routes.route('/accounts', methods=['POST'])
+# @login_required
 def create_account():
     Session = sessionmaker(connection)
     s = Session()
-
     s.begin()
+
     try:
         NewAccount = Accounts(
             user_id=request.form['user_id'],
@@ -88,13 +93,17 @@ def create_account():
     return { "message": "New account added" }, 200
 
 @account_routes.route('/accounts/<id>', methods=['PUT'])
+# @login_required
 def update_account(id):
     Session = sessionmaker(connection)
     s = Session()
     s.begin()
 
     try:
-        account = s.query(Accounts).filter(Accounts.id == id).first()
+        account = s.query(Accounts).filter(Accounts.id == id, current_user.id == Accounts.user_id).first()
+
+        if account == None:
+            return { "message": "Account not found" }, 403            
 
         account.user_id = request.form['user_id']        
         account.account_type = request.form['account_type']
@@ -115,14 +124,18 @@ def delete_account(id):
     s = Session()
     s.begin()
     try:
-        account = s.query(Accounts).filter(Accounts.id == id).first()
+        account = s.query(Accounts).filter(Accounts.id == id, current_user.id == Accounts.user_id).first()
+
+        if account == None:
+            return { "message": "Account not found" }, 403            
+
         s.delete(account)
         s.commit()
-        return { 'message': 'Success delete product data'}, 200        
+        return { 'message': 'Delete account success'}, 200        
     
     except Exception as e:
         print(e)
         s.rollback()
-        return { "message": "Fail to Delete" }, 500
+        return { "message": "Delete account failed" }, 500
 
     
