@@ -57,3 +57,28 @@ API Documentation Link: https://documenter.getpostman.com/view/34517544/2sA3dyjC
 ![alt text](docs/users/Screenshot_212%20(2).png) 
 ![alt text](docs/users/Screenshot_211%20(2).png)
 
+2. Account Management: 
+- GET /accounts
+![alt text](docs/accounts/Screenshot_215.png)
+
+
+- GET /accounts/:id
+![alt text](docs/accounts/Screenshot_214.png)
+
+- POST /accounts
+![alt text](docs/accounts/Screenshot_211.png)
+
+- PUT /accounts/:id
+![alt text](docs/accounts/Screenshot_213.png)
+
+- DELETE /accounts/:id
+![alt text](docs/accounts/Screenshot_214.png)
+
+![alt text](docs/accounts/Screenshot_217.png)
+
+
+
+3. Transaction Management: 
+- GET /transactions: Retrieve a list of all transactions for the currently authenticated user's accounts. (Optional: filter by account ID, date range)
+- GET /transactions/:id: Retrieve details of a specific transaction by its ID. (Authorization required for related account owner)
+- POST /transactions: Initiate a new transaction (deposit, withdrawal, or transfer). (Authorization required for related account owner)
