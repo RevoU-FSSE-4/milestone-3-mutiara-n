@@ -39,20 +39,21 @@ API Documentation Link: https://documenter.getpostman.com/view/34517544/2sA3dyjC
 ### Screenshots
 1. User Management
 - POST /users
-![alt text](Screenshot_211-1.png)
+![alt text](docs/users/Screenshot_211.png)
 
 - POST /users/login
-![alt text](Screenshot_212.png)
+![alt text](docs/users/Screenshot_212.png)
 
 - GET /users/me
-![alt text](Screenshot_213.png)
+![alt text](docs/users/Screenshot_213.png)
 
 - PUT /users/me
-![alt text](Screenshot_214.png)
+![alt text](docs/users/Screenshot_214.png)
 
-![alt text](Screenshot_215.png)
+![alt text](docs/users/Screenshot_215.png)
 
 - GET /users/logout
-![alt text](Screenshot_216.png)
-![alt text](<Screenshot_212 (2).png>) 
-![alt text](<Screenshot_211 (2).png>)
+![alt text](docs/users/Screenshot_216.png)
+![alt text](docs/users/Screenshot_212%20(2).png) 
+![alt text](docs/users/Screenshot_211%20(2).png)
+
